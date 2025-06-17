@@ -82,8 +82,7 @@ try {
 
   // Route dasar untuk testing
   app.get("/", (req, res) => {
-    console.log("Handling GET / request");
-    res.send("hello world");
+    res.send("BE-diary-food is running!");
   });
 
   // Inisialisasi Passport
@@ -113,10 +112,7 @@ try {
   console.log("App initialization completed successfully");
 } catch (error) {
   console.error("Error initializing app.js:", error.message);
-  throw new ApiError(
-    httpStatus.INTERNAL_SERVER_ERROR,
-    "Application initialization failed"
-  );
+  throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Application initialization failed");
 }
 
 export default app;
