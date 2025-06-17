@@ -50,7 +50,9 @@ try {
   console.log("Applying CORS with CLIENT_URL:", config.clientUrl);
   app.use(
     cors({
-      origin: config.clientUrl,
+      origin: [
+        "https://diary-food1222.vercel.app", // Frontend production
+      ],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
