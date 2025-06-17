@@ -21,7 +21,7 @@ const config = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://diary-food1222.vercel.app/v1/auth/google/callback",
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
   },
   // facebook: {
   //   clientId: process.env.FACEBOOK_CLIENT_ID,
