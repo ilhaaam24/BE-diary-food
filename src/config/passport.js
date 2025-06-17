@@ -32,7 +32,7 @@ const googleStrategy = new GoogleStrategy(
   {
     clientID: config.google.clientId,
     clientSecret: config.google.clientSecret,
-    callbackURL: config.google.callbackURL,
+    callbackURL: `${process.env.BACKEND_URL}/v1/auth/google/callback`,
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
