@@ -70,6 +70,7 @@
     "swagger-ui-express": "^4.6.3",
     "uuid": "^9.0.0",
     "validator": "^13.0.0",
+    "vercel": "^43.2.0",
     "winston": "^3.2.1",
     "yamljs": "^0.3.0"
   },
