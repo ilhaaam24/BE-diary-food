@@ -1,0 +1,287 @@
+/resep:
+  post:
+    tags:
+      - Resep
+    summary: Create a new resep
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nama
+              - kategoriId
+              - userId
+              - bahan
+              - langkahPembuatan
+            properties:
+              nama:
+                type: string
+              photoResep:
+                type: string
+              kategoriId:
+                type: integer
+              userId:
+                type: integer
+              bahan:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - nama
+                    - jumlah
+                  properties:
+                    nama:
+                      type: string
+                    jumlah:
+                      type: string
+              langkahPembuatan:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - urutan
+                    - deskripsi
+                  properties:
+                    urutan:
+                      type: integer
+                      minimum: 1
+                    deskripsi:
+                      type: string
+    responses:
+      "201":
+        description: Success create resep
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+  get:
+    tags:
+      - Resep
+    summary: Get list of reseps
+    parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+      - in: query
+        name: kategoriId
+        schema:
+          type: integer
+      - in: query
+        name: userId
+        schema:
+          type: integer
+      - in: query
+        name: isApproved
+        schema:
+          type: string
+          enum: [APPROVED, REJECTED, PENDING]
+          default: PENDING
+    responses:
+      "200":
+        description: Success get reseps
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    type: object
+/resep/upload-photo:
+  post:
+    tags:
+      - Resep
+    summary: Upload resep photo
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - photo
+            properties:
+              photo:
+                type: string
+                format: binary
+    responses:
+      "200":
+        description: Success upload resep photo
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+/resep/{resepId}/update-photo:
+  put:
+    tags:
+      - Resep
+    summary: Update resep photo
+    parameters:
+      - name: resepId
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - file
+            properties:
+              file:
+                type: string
+                format: binary
+    responses:
+      "200":
+        description: Foto resep berhasil diupdate
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+/resep/{resepId}:
+  get:
+    tags:
+      - Resep
+    summary: Get resep by ID
+    parameters:
+      - name: resepId
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Success get resep
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+  put:
+    tags:
+      - Resep
+    summary: Update resep
+    parameters:
+      - name: resepId
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nama:
+                type: string
+              photoResep:
+                type: string
+              kategoriId:
+                type: integer
+              userId:
+                type: integer
+              isApproved:
+                type: string
+                enum: [APPROVED, REJECTED, PENDING]
+              bahan:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nama:
+                      type: string
+                    jumlah:
+                      type: string
+              langkahPembuatan:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    urutan:
+                      type: integer
+                    deskripsi:
+                      type: string
+    responses:
+      "200":
+        description: Success update resep
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object
+  delete:
+    tags:
+      - Resep
+    summary: Delete resep
+    parameters:
+      - name: resepId
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Success delete resep
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                message:
+                  type: string
+                data:
+                  type: object

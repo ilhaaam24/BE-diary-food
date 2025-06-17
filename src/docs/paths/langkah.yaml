@@ -1,0 +1,67 @@
+/langkah:
+  post:
+    tags:
+      - Langkah
+    summary: Create a new langkah
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/langkah/LangkahCreate.yaml"
+    responses:
+      "201":
+        description: Success create langkah
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/langkah/LangkahResponse.yaml"
+
+/langkah/{langkahId}:
+  put:
+    tags:
+      - Langkah
+    summary: Update langkah by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: langkahId
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/langkah/LangkahUpdate.yaml"
+    responses:
+      "200":
+        description: Success update langkah
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/langkah/LangkahResponse.yaml"
+
+  delete:
+    tags:
+      - Langkah
+    summary: Delete langkah by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: langkahId
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Success delete langkah
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/langkah/LangkahResponse.yaml"

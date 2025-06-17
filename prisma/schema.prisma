@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  password    String
+  phoneNumber String?
+  role        Role     @default(user)
+  photo       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  resepDisetujui Resep[] @relation("ResepDisetujuiAdmin")
+  resepDiunggah  Resep[] @relation("UserUploadResep")
+
+  Thread   Thread[]
+  comment  Comment[]  @relation("UserComment")
+  feedback Feedback[] @relation("UserFeedback")
+
+  savedResep SavedResep[]
+}
+
+model Resep {
+  id              Int                @id @default(autoincrement())
+  nama            String
+  photoResep      String?
+  kategoriId      Int
+  tanggalUnggahan DateTime           @default(now())
+  userId          Int
+  isApproved      StatusResep        @default(PENDING)
+  tanggalAcc      DateTime?
+  disetujuiOleh   Int?
+  description     String
+  preparationTime String
+  cookingTime     String
+  servingTime     String
+  note            String?
+  rating          Int?
+  bahanList       Bahan[]
+  langkahList     LangkahPembuatan[]
+
+  comment Comment[] @relation("RecipeComment")
+
+  admin        User?        @relation("ResepDisetujuiAdmin", fields: [disetujuiOleh], references: [id])
+  kategori     Kategori     @relation(fields: [kategoriId], references: [id])
+  user         User         @relation("UserUploadResep", fields: [userId], references: [id], onDelete: Cascade)
+  disimpanOleh SavedResep[]
+}
+
+enum StatusResep {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model SavedResep {
+  id      Int      @id @default(autoincrement())
+  userId  Int
+  resepId Int
+  savedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resep Resep @relation(fields: [resepId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, resepId])
+}
+
+model Kategori {
+  id          Int        @id @default(autoincrement())
+  nama        String
+  parentId    Int?       @map("parent_id")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?  @updatedAt
+
+  parent      Kategori?  @relation("CategoryToSubcategory", fields: [parentId], references: [id], onDelete: SetNull)
+  subcategories Kategori[] @relation("CategoryToSubcategory")
+  resep       Resep[]
+}
+
+model Bahan {
+  id      Int    @id @default(autoincrement())
+  resepId Int
+  nama    String
+  jumlah  String
+  resep   Resep  @relation(fields: [resepId], references: [id], onDelete: Cascade)
+}
+
+model LangkahPembuatan {
+  id        Int    @id @default(autoincrement())
+  resepId   Int
+  urutan    Int
+  deskripsi String
+  resep     Resep  @relation(fields: [resepId], references: [id], onDelete: Cascade)
+}
+
+model Thread {
+  id        Int      @id @default(autoincrement())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  role      RoleChat
+  content   String
+  thought   String?
+  createdAt DateTime @default(now())
+  threadId  Int
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+enum RoleChat {
+  user
+  assistant
+}
+
+enum Role {
+  admin
+  user
+}
+
+model Feedback {
+  id              Int      @id @default(autoincrement())
+  fullname        String
+  userId          Int
+  email           String
+  tanggalFeedback DateTime @default(now())
+  subject         String
+  message         String
+  user            User     @relation("UserFeedback", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  resepId   Int
+  userId    Int
+  comment   String
+  rating    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  resep Resep @relation("RecipeComment", fields: [resepId], references: [id], onDelete: Cascade)
+  user  User  @relation("UserComment", fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,116 @@
+/message/new:
+  post:
+    tags:
+      - Message
+    summary: Send first message and create a new thread
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content
+            properties:
+              content:
+                type: string
+    responses:
+      "200":
+        description: Message and thread created
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Message sent and thread created"
+                data:
+                  threadId: 10
+                  messages:
+                    - id: 1
+                      threadId: 10
+                      senderId: 5
+                      content: "Hello!"
+                      timestamp: "2025-05-23T15:10:00.000Z"
+
+/message/{threadId}:
+  post:
+    tags:
+      - Message
+    summary: Send message to existing thread
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - content
+            properties:
+              content:
+                type: string
+    responses:
+      "200":
+        description: Message sent
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Message sent"
+                data:
+                  threadId: 10
+                  messages:
+                    - id: 2
+                      threadId: 10
+                      senderId: 5
+                      content: "Apa kabar?"
+                      timestamp: "2025-05-23T15:12:00.000Z"
+
+  get:
+    tags:
+      - Message
+    summary: Get all messages by thread ID
+    parameters:
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Success get messages
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Messages retrieved"
+                data:
+                  threadId: 10
+                  messages:
+                    - id: 1
+                      threadId: 10
+                      senderId: 5
+                      content: "Halo"
+                      timestamp: "2025-05-23T15:10:00.000Z"
+                    - id: 2
+                      threadId: 10
+                      senderId: 6
+                      content: "Hai juga"
+                      timestamp: "2025-05-23T15:11:00.000Z"

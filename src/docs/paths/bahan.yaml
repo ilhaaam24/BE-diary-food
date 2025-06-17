@@ -1,0 +1,69 @@
+/bahan:
+  post:
+    tags:
+      - Bahan
+    summary: Create a new bahan
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/bahan/BahanCreate.yaml"
+    responses:
+      "200":
+        description: Success create bahan
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/bahan/BahanResponse.yaml"
+
+  # Jika ingin support GET semua bahan, bisa tambahkan di sini
+
+/bahan/{bahanId}:
+  put:
+    tags:
+      - Bahan
+    summary: Update a bahan by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: bahanId
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/bahan/BahanUpdate.yaml"
+    responses:
+      "200":
+        description: Success update bahan
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/bahan/BahanResponse.yaml"
+
+  delete:
+    tags:
+      - Bahan
+    summary: Delete a bahan by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: bahanId
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Success delete bahan
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/bahan/BahanResponse.yaml"

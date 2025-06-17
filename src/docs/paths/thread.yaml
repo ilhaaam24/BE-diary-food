@@ -1,0 +1,157 @@
+/thread:
+  get:
+    tags:
+      - Thread
+    summary: Get all threads
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Success get threads
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+                statusCode:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Success get threads
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: My First Thread
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-23T12:00:00Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-23T13:00:00Z"
+                      _count:
+                        type: object
+                        properties:
+                          messages:
+                            type: integer
+                            example: 5
+
+/thread/{threadId}:
+  get:
+    tags:
+      - Thread
+    summary: Get a thread by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: integer
+          example: 1
+    responses:
+      "200":
+        description: Success get thread
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+                statusCode:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Success get thread
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    title:
+                      type: string
+                      example: My First Thread
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2025-05-23T12:00:00Z"
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: "2025-05-23T13:00:00Z"
+                    userId:
+                      type: integer
+                      example: 7
+                    messages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 101
+                          role:
+                            type: string
+                            example: user
+                          content:
+                            type: string
+                            example: Hello, assistant!
+                          thought:
+                            type: string
+                            nullable: true
+                            example: null
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: "2025-05-23T12:01:00Z"
+                          threadId:
+                            type: integer
+                            example: 1
+
+  delete:
+    tags:
+      - Thread
+    summary: Delete a thread by ID
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: integer
+          example: 1
+    responses:
+      "200":
+        description: Success delete thread
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+                statusCode:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Thread successfully deleted

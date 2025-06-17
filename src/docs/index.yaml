@@ -1,0 +1,1760 @@
+openapi: 3.0.0
+info:
+  title: API BE DiaryFood
+  version: 1.0.0
+  description: Dokumentasi API DiaryFood
+servers:
+  - url: http://localhost:3000/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  description: Must contain at least 1 letter and 1 number
+                name:
+                  type: string
+                role:
+                  type: string
+                  enum: [user, admin]
+                  default: user
+                photo:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Register success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Register success
+                  data:
+                    type: object
+                    properties:
+                      userCreated:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 34
+                          name:
+                            type: string
+                            example: admin
+                          email:
+                            type: string
+                            example: admin3@example.com
+                          role:
+                            type: string
+                            example: user
+                          photo:
+                            type: string
+                            nullable: true
+                            example: null
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: 2025-05-23T13:15:18.469Z
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: 2025-05-23T13:15:18.469Z
+                      tokens:
+                        type: object
+                        properties:
+                          access:
+                            type: object
+                            properties:
+                              token:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                              expires:
+                                type: string
+                                format: date-time
+                                example: 2025-05-23T14:00:18.998Z
+                          refresh:
+                            type: object
+                            properties:
+                              token:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                              expires:
+                                type: string
+                                format: date-time
+                                example: 2025-05-30T13:15:18.999Z
+
+  /auth/login:
+    post:
+      summary: Login user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login success
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 4
+                          name:
+                            type: string
+                            example: admin
+                          email:
+                            type: string
+                            example: admin@example.com
+                          role:
+                            type: string
+                            example: admin
+                          photo:
+                            type: string
+                            format: uri
+                            example: https://yaoxcisksxcoidwuqurx.supabase.co/storage/object/public/photo-user/2234d0f1-2dbe-4cde-af16-37d743a69c27.png
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: 2025-05-22T06:40:14.007Z
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: 2025-05-23T09:59:30.965Z
+                      tokens:
+                        type: object
+                        properties:
+                          access:
+                            type: object
+                            properties:
+                              token:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                              expires:
+                                type: string
+                                format: date-time
+                                example: 2025-05-23T13:37:41.719Z
+                          refresh:
+                            type: object
+                            properties:
+                              token:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                              expires:
+                                type: string
+                                format: date-time
+                                example: 2025-05-30T12:52:41.719Z
+
+  /user:
+    post:
+      summary: Create a new user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [user, admin]
+                  default: user
+                photo:
+                  type: string
+                  nullable: true
+      responses:
+        201:
+          description: Success create user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      photo:
+                        type: string
+                        nullable: true
+
+    get:
+      summary: Get list of users
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: Success get users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        role:
+                          type: string
+                        photo:
+                          type: string
+                          nullable: true
+
+  /user/searchByEmail:
+    get:
+      summary: Get user by email
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Success get user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      photo:
+                        type: string
+                        nullable: true
+
+  /user/upload-photo:
+    post:
+      summary: Upload user photo
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Success upload photo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  photoUrl:
+                    type: string
+
+  /user/{userId}/update-photo:
+    put:
+      summary: Update user photo
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Success update photo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /user/{userId}:
+    get:
+      summary: Get user by ID
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success get user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      photo:
+                        type: string
+                        nullable: true
+
+    put:
+      summary: Update user
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                  enum: [user, admin]
+                photo:
+                  type: string
+              required:
+                - name
+                - email
+      responses:
+        200:
+          description: Success update user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    delete:
+      summary: Delete user
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success delete user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /resep:
+    post:
+      tags:
+        - Resep
+      summary: Create a new resep
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nama
+                - kategoriId
+                - userId
+                - bahan
+                - langkahPembuatan
+              properties:
+                nama:
+                  type: string
+                photoResep:
+                  type: string
+                kategoriId:
+                  type: integer
+                userId:
+                  type: integer
+                bahan:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - nama
+                      - jumlah
+                    properties:
+                      nama:
+                        type: string
+                      jumlah:
+                        type: string
+                langkahPembuatan:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - urutan
+                      - deskripsi
+                    properties:
+                      urutan:
+                        type: integer
+                        minimum: 1
+                      deskripsi:
+                        type: string
+      responses:
+        "201":
+          description: Success create resep
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+    get:
+      tags:
+        - Resep
+      summary: Get list of reseps
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+      responses:
+        "200":
+          description: Success get reseps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+
+  /resep/{resepId}/save:
+    post:
+      tags:
+        - Resep
+      summary: Simpan resep oleh user
+      description: Menyimpan resep ke daftar simpanan user yang sedang login.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID resep yang ingin disimpan
+      responses:
+        200:
+          description: Resep berhasil disimpan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Resep berhasil disimpan
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 4
+                      userId:
+                        type: integer
+                        example: 2
+                      resepId:
+                        type: integer
+                        example: 5
+                      savedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-27T13:09:40.084Z"
+        400:
+          description: Resep sudah disimpan sebelumnya
+        401:
+          description: Tidak terautentikasi
+        404:
+          description: Resep tidak ditemukan
+
+  /resep/saved:
+    get:
+      tags:
+        - Resep
+      summary: Ambil semua resep yang disimpan oleh user
+      description: Mengambil daftar semua resep yang disimpan oleh user yang sedang login.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Berhasil mengambil resep yang disimpan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Berhasil mengambil resep yang disimpan
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 5
+                        userId:
+                          type: integer
+                          example: 4
+                        resepId:
+                          type: integer
+                          example: 5
+                        savedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-05-27T13:11:50.765Z"
+                        resep:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 5
+                            nama:
+                              type: string
+                              example: Salad Buah 500
+                            photoResep:
+                              type: string
+                              nullable: true
+                              example: null
+                            kategoriId:
+                              type: integer
+                              example: 2
+                            tanggalUnggahan:
+                              type: string
+                              format: date-time
+                              example: "2025-05-27T12:54:59.950Z"
+                            userId:
+                              type: integer
+                              example: 2
+                            isApproved:
+                              type: string
+                              enum: [PENDING, APPROVED, REJECTED]
+                              example: PENDING
+                            tanggalAcc:
+                              type: string
+                              format: date-time
+                              nullable: true
+                              example: null
+                            disetujuiOleh:
+                              type: string
+                              nullable: true
+                              example: null
+        401:
+          description: Tidak terautentikasi
+
+  /resep/{resepId}/unsave:
+    delete:
+      tags:
+        - Resep
+      summary: Hapus resep dari daftar simpanan user
+      description: Menghapus resep dari daftar simpanan user yang sedang login.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID resep yang ingin dihapus dari simpanan
+      responses:
+        200:
+          description: Resep berhasil dihapus dari simpanan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Resep berhasil dihapus dari simpanan
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      userId:
+                        type: integer
+                        example: 2
+                      resepId:
+                        type: integer
+                        example: 2
+                      savedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-27T13:08:46.487Z"
+        401:
+          description: Tidak terautentikasi
+        404:
+          description: Simpanan tidak ditemukan
+
+  /resep/upload-photo:
+    post:
+      tags:
+        - Resep
+      summary: Upload resep photo
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - photo
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Success upload resep photo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+
+  /resep/{resepId}/update-photo:
+    put:
+      tags:
+        - Resep
+      summary: Update resep photo
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Foto resep berhasil diupdate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+
+  /resep/{resepId}:
+    get:
+      tags:
+        - Resep
+      summary: Get resep by ID
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success get resep
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+    put:
+      tags:
+        - Resep
+      summary: Update resep
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nama:
+                  type: string
+                photoResep:
+                  type: string
+                kategoriId:
+                  type: integer
+                userId:
+                  type: integer
+                isApproved:
+                  type: string
+                  enum: [APPROVED, REJECTED, PENDING]
+                bahan:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nama:
+                        type: string
+                      jumlah:
+                        type: string
+                langkahPembuatan:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      urutan:
+                        type: integer
+                      deskripsi:
+                        type: string
+      responses:
+        "200":
+          description: Success update resep
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+    delete:
+      tags:
+        - Resep
+      summary: Delete resep
+      parameters:
+        - name: resepId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success delete resep
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+
+  /category:
+    post:
+      summary: Create a new category
+      tags:
+        - category
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nama
+              properties:
+                nama:
+                  type: string
+      responses:
+        201:
+          description: Success create category
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 201
+                  message: Success create category
+                  data:
+                    id: 13
+                    nama: tes
+    get:
+      summary: Get all categories
+      tags:
+        - category
+      responses:
+        200:
+          description: Success get categorys
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success get categorys
+                  data:
+                    - id: 1
+                      nama: Breakfast
+                      resep: []
+
+  /category/{kategoriId}:
+    get:
+      summary: Get category by ID
+      tags:
+        - category
+      parameters:
+        - name: kategoriId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success get category
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success get category
+                  data:
+                    id: 2
+                    nama: Lunch
+                    resep: []
+    put:
+      summary: Update category
+      tags:
+        - category
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: kategoriId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nama
+              properties:
+                nama:
+                  type: string
+      responses:
+        200:
+          description: Success update category
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success update category
+                  data:
+                    id: 13
+                    nama: Main Course
+    delete:
+      summary: Delete category
+      tags:
+        - category
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: kategoriId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success delete category
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success delete category
+                  data:
+                    id: 13
+                    nama: Main Course
+
+  /bahan:
+    post:
+      tags:
+        - Bahan
+      summary: Create a new bahan
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resepId
+                - nama
+                - jumlah
+              properties:
+                resepId:
+                  type: integer
+                  example: 1
+                nama:
+                  type: string
+                  example: Gula
+                jumlah:
+                  type: string
+                  example: 2 sendok makan
+      responses:
+        "200":
+          description: Success create bahan
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success create bahan
+                  data:
+                    id: 12
+                    resepId: 1
+                    nama: Gula
+                    jumlah: 2 sendok makan
+
+  /bahan/{bahanId}:
+    put:
+      tags:
+        - Bahan
+      summary: Update a bahan by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bahanId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nama:
+                  type: string
+                  example: Garam
+                jumlah:
+                  type: string
+                  example: 1 sendok teh
+              minProperties: 1
+      responses:
+        "200":
+          description: Success update bahan
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success update bahan
+                  data:
+                    id: 12
+                    resepId: 1
+                    nama: Garam
+                    jumlah: 1 sendok teh
+
+    delete:
+      tags:
+        - Bahan
+      summary: Delete a bahan by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bahanId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success delete bahan
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success delete bahan
+                  data:
+                    id: 12
+                    resepId: 1
+                    nama: Garam
+                    jumlah: 1 sendok teh
+
+  /langkah:
+    post:
+      tags:
+        - Langkah
+      summary: Create a new langkah
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resepId
+                - urutan
+                - deskripsi
+              properties:
+                resepId:
+                  type: integer
+                  example: 1
+                urutan:
+                  type: integer
+                  example: 1
+                deskripsi:
+                  type: string
+                  example: Masukkan bahan ke dalam panci
+      responses:
+        "201":
+          description: Success create langkah
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 201
+                  message: Success create langkah
+                  data:
+                    id: 10
+                    resepId: 1
+                    urutan: 1
+                    deskripsi: Masukkan bahan ke dalam panci
+
+  /langkah/{langkahId}:
+    put:
+      tags:
+        - Langkah
+      summary: Update langkah by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: langkahId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                urutan:
+                  type: integer
+                  example: 2
+                deskripsi:
+                  type: string
+                  example: Aduk selama 5 menit
+              minProperties: 1
+      responses:
+        "200":
+          description: Success update langkah
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success update langkah
+                  data:
+                    id: 10
+                    resepId: 1
+                    urutan: 2
+                    deskripsi: Aduk selama 5 menit
+
+    delete:
+      tags:
+        - Langkah
+      summary: Delete langkah by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: langkahId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success delete langkah
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: Success delete langkah
+                  data:
+                    id: 10
+                    resepId: 1
+                    urutan: 2
+                    deskripsi: Aduk selama 5 menit
+
+  /admin/resep:
+    get:
+      tags:
+        - Admin Resep
+      summary: Ambil semua resep
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Resep berhasil diambil"
+                  data:
+                    data:
+                      - id: 12
+                        nama: "string"
+                        photoResep: "https://example.com/photo.png"
+                        kategoriId: 2
+                        tanggalUnggahan: "2025-05-23T14:02:45.003Z"
+                        userId: 6
+                        isApproved: "PENDING"
+                        tanggalAcc: null
+                        disetujuiOleh: null
+                        bahanList:
+                          - id: 55
+                            resepId: 12
+                            nama: "string"
+                            jumlah: "string"
+                        langkahList:
+                          - id: 34
+                            resepId: 12
+                            urutan: 1
+                            deskripsi: "string"
+                    pagination:
+                      totalItems: 7
+                      totalPages: 1
+                      currentPage: 1
+
+  /admin/resep/pending:
+    get:
+      tags:
+        - Admin Resep
+      summary: Ambil resep yang pending
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Resep pending berhasil diambil"
+                  data:
+                    data:
+                      - id: 12
+                        nama: "string"
+                        photoResep: "https://example.com/photo.png"
+                        kategoriId: 2
+                        tanggalUnggahan: "2025-05-23T14:02:45.003Z"
+                        userId: 6
+                        isApproved: "PENDING"
+                        tanggalAcc: null
+                        disetujuiOleh: null
+                        bahanList:
+                          - id: 55
+                            resepId: 12
+                            nama: "string"
+                            jumlah: "string"
+                        langkahList:
+                          - id: 34
+                            resepId: 12
+                            urutan: 1
+                            deskripsi: "string"
+                    pagination:
+                      totalItems: 3
+                      totalPages: 1
+                      currentPage: 1
+  /admin/resep/{id}/approve:
+    put:
+      tags:
+        - Admin Resep
+      summary: Approve resep
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resep berhasil diapprove
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Resep berhasil diapprove"
+                  data:
+                    id: 5
+                    nama: "Salad Buah 4"
+                    photoResep: "https://example.com/photo.jpg"
+                    kategoriId: 1
+                    tanggalUnggahan: "2025-05-22T09:38:51.629Z"
+                    userId: 9
+                    isApproved: "APPROVED"
+                    tanggalAcc: null
+                    disetujuiOleh: null
+
+  /admin/resep/{id}/reject:
+    put:
+      tags:
+        - Admin Resep
+      summary: Reject resep
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resep berhasil direject
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Resep berhasil direject"
+                  data:
+                    id: 5
+                    nama: "Salad Buah 4"
+                    photoResep: "https://example.com/photo.jpg"
+                    kategoriId: 1
+                    tanggalUnggahan: "2025-05-22T09:38:51.629Z"
+                    userId: 9
+                    isApproved: "REJECTED"
+                    tanggalAcc: null
+                    disetujuiOleh: null
+
+  /message/new:
+    post:
+      tags:
+        - Message
+      summary: Send first message and create a new thread
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+      responses:
+        "200":
+          description: Message and thread created
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Message sent and thread created"
+                  data:
+                    threadId: 10
+                    messages:
+                      - id: 1
+                        threadId: 10
+                        senderId: 5
+                        content: "Hello!"
+                        timestamp: "2025-05-23T15:10:00.000Z"
+
+  /message/{threadId}:
+    post:
+      tags:
+        - Message
+      summary: Send message to existing thread
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: threadId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+      responses:
+        "200":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Message sent"
+                  data:
+                    threadId: 10
+                    messages:
+                      - id: 2
+                        threadId: 10
+                        senderId: 5
+                        content: "Apa kabar?"
+                        timestamp: "2025-05-23T15:12:00.000Z"
+
+    get:
+      tags:
+        - Message
+      summary: Get all messages by thread ID
+      parameters:
+        - in: path
+          name: threadId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success get messages
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: true
+                  statusCode: 200
+                  message: "Messages retrieved"
+                  data:
+                    threadId: 10
+                    messages:
+                      - id: 1
+                        threadId: 10
+                        senderId: 5
+                        content: "Halo"
+                        timestamp: "2025-05-23T15:10:00.000Z"
+                      - id: 2
+                        threadId: 10
+                        senderId: 6
+                        content: "Hai juga"
+                        timestamp: "2025-05-23T15:11:00.000Z"
+
+  /thread:
+    get:
+      tags:
+        - Thread
+      summary: Get all threads
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Success get threads
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Success get threads
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: My First Thread
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2025-05-23T12:00:00Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2025-05-23T13:00:00Z"
+                        _count:
+                          type: object
+                          properties:
+                            messages:
+                              type: integer
+                              example: 5
+
+  /thread/{threadId}:
+    get:
+      tags:
+        - Thread
+      summary: Get a thread by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: threadId
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Success get thread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Success get thread
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: My First Thread
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-23T12:00:00Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-05-23T13:00:00Z"
+                      userId:
+                        type: integer
+                        example: 7
+                      messages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 101
+                            role:
+                              type: string
+                              example: user
+                            content:
+                              type: string
+                              example: Hello, assistant!
+                            thought:
+                              type: string
+                              nullable: true
+                              example: null
+                            createdAt:
+                              type: string
+                              format: date-time
+                              example: "2025-05-23T12:01:00Z"
+                            threadId:
+                              type: integer
+                              example: 1
+
+    delete:
+      tags:
+        - Thread
+      summary: Delete a thread by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: threadId
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Success delete thread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Thread successfully deleted

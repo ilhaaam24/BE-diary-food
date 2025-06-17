@@ -1,0 +1,148 @@
+/admin/resep:
+  get:
+    tags:
+      - Admin Resep
+    summary: Ambil semua resep
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Resep berhasil diambil"
+                data:
+                  data:
+                    - id: 12
+                      nama: "string"
+                      photoResep: "https://example.com/photo.png"
+                      kategoriId: 2
+                      tanggalUnggahan: "2025-05-23T14:02:45.003Z"
+                      userId: 6
+                      isApproved: "PENDING"
+                      tanggalAcc: null
+                      disetujuiOleh: null
+                      bahanList:
+                        - id: 55
+                          resepId: 12
+                          nama: "string"
+                          jumlah: "string"
+                      langkahList:
+                        - id: 34
+                          resepId: 12
+                          urutan: 1
+                          deskripsi: "string"
+                  pagination:
+                    totalItems: 7
+                    totalPages: 1
+                    currentPage: 1
+
+/admin/resep/pending:
+  get:
+    tags:
+      - Admin Resep
+    summary: Ambil resep yang pending
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Resep pending berhasil diambil"
+                data:
+                  data:
+                    - id: 12
+                      nama: "string"
+                      photoResep: "https://example.com/photo.png"
+                      kategoriId: 2
+                      tanggalUnggahan: "2025-05-23T14:02:45.003Z"
+                      userId: 6
+                      isApproved: "PENDING"
+                      tanggalAcc: null
+                      disetujuiOleh: null
+                      bahanList:
+                        - id: 55
+                          resepId: 12
+                          nama: "string"
+                          jumlah: "string"
+                      langkahList:
+                        - id: 34
+                          resepId: 12
+                          urutan: 1
+                          deskripsi: "string"
+                  pagination:
+                    totalItems: 3
+                    totalPages: 1
+                    currentPage: 1
+/admin/resep/{id}/approve:
+  put:
+    tags:
+      - Admin Resep
+    summary: Approve resep
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Resep berhasil diapprove
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Resep berhasil diapprove"
+                data:
+                  id: 5
+                  nama: "Salad Buah 4"
+                  photoResep: "https://example.com/photo.jpg"
+                  kategoriId: 1
+                  tanggalUnggahan: "2025-05-22T09:38:51.629Z"
+                  userId: 9
+                  isApproved: "APPROVED"
+                  tanggalAcc: null
+                  disetujuiOleh: null
+
+/admin/resep/{id}/reject:
+  put:
+    tags:
+      - Admin Resep
+    summary: Reject resep
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      "200":
+        description: Resep berhasil direject
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                status: true
+                statusCode: 200
+                message: "Resep berhasil direject"
+                data:
+                  id: 5
+                  nama: "Salad Buah 4"
+                  photoResep: "https://example.com/photo.jpg"
+                  kategoriId: 1
+                  tanggalUnggahan: "2025-05-22T09:38:51.629Z"
+                  userId: 9
+                  isApproved: "REJECTED"
+                  tanggalAcc: null
+                  disetujuiOleh: null
