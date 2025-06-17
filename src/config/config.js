@@ -21,14 +21,14 @@ const config = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:4000/v1/auth/google/callback",
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://diary-food1222.vercel.app/v1/auth/google/callback",
   },
   // facebook: {
   //   clientId: process.env.FACEBOOK_CLIENT_ID,
   //   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
   //   callbackURL: process.env.FACEBOOK_CALLBACK_URL || "http://localhost:3000/v1/auth/facebook/callback",
   // },
-  clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+  clientUrl: process.env.CLIENT_URL || "https://diary-food1222.vercel.app/",
 };
 
 export default config;
