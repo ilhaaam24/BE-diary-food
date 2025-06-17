@@ -2,22 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "prisma/**",
-          "src/**",
-          "node_modules/@prisma/client/**"
-        ],
-        "buildCommand": "npx prisma generate"
-      }
+      "src": "index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.js"
+      "dest": "index.js"
     }
   ]
 }
